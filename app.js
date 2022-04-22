@@ -78,7 +78,9 @@ app.post("/sync", (req, res) => {
     let shell = process.env["SHELL"]
     cmd = `${shell} -c ${cmd}`
   } else {
-    cmd = `"/Applications/Visual Studio Code.app/Contents/MacOS/Electron" "${WIDGET_FILE}"`
+    // cmd = `"/Users/meizu/Documents/code/github/LambdaExpression/Scriptables/Scripts" "${WIDGET_FILE}"`
+    cmd = `"echo" "${WIDGET_FILE}"`
+
   }
   child_process.execSync(cmd)
 })
