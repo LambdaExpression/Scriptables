@@ -717,14 +717,71 @@ const Running = async (Widget, default_args = "") => {
       // 弹出选择菜单
       const actions = M['_actions']
       const _actions = [
-        async () => {
-          Safari.openInApp("https://support.qq.com/products/287371", false)
-        }
+        // async () => {
+        //   Safari.openInApp("https://support.qq.com/products/287371", false)
+        // }
+        // 预览组件
+        async (debug = false) => {
+          let a = new Alert()
+          a.title = "预览组件"
+          a.message = "测试桌面组件在各种尺寸下的显示效果"
+          a.addAction("小尺寸 Small")
+          a.addAction("中尺寸 Medium")
+          a.addAction("大尺寸 Large")
+          a.addAction("全部 All")
+          a.addCancelAction("取消操作")
+          const funcs = []
+          if (debug) {
+            for (let _ in actions) {
+              a.addAction(_)
+              funcs.push(actions[_].bind(M))
+            }
+            a.addDestructiveAction("停止调试")
+          }
+          let i = await a.presentSheet()
+          if (i === -1) return
+          let w
+          switch (i) {
+            case 0:
+              M.widgetFamily = 'small'
+              w = await M.render()
+              await w.presentSmall()
+              break;
+            case 1:
+              M.widgetFamily = 'medium'
+              w = await M.render()
+              await w.presentMedium()
+              break
+            case 2:
+              M.widgetFamily = 'large'
+              w = await M.render()
+              await w.presentLarge()
+              break
+            case 3:
+              M.widgetFamily = 'small'
+              w = await M.render()
+              await w.presentSmall()
+              M.widgetFamily = 'medium'
+              w = await M.render()
+              await w.presentMedium()
+              M.widgetFamily = 'large'
+              w = await M.render()
+              await w.presentLarge()
+              break
+            default:
+              const func = funcs[i - 4];
+              if (func) await func();
+              break;
+          }
+
+          return i
+        },
       ]
       const alert = new Alert()
       alert.title = M.name
       alert.message = M.desc
-      alert.addAction("反馈交流")
+      // alert.addAction("反馈交流")
+      alert.addAction("预览组件")
       for (let _ in actions) {
         alert.addAction(_)
         _actions.push(actions[_])
