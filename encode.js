@@ -39,7 +39,9 @@ let result_header = widget_code.split("// icon-color:")[0]
 result_header += "// icon-color:"
 result_header += widget_code.split("// icon-color:")[1].split("\n")[0]
 result_header += "\n// " + file_name
-result_header += "\n// https://github.com/im3x/Scriptables"
+result_header += "\n// https://github.com/LambdaExpression/Scriptables"
+result_header += "\n// hash: "+ Math.random().toString(36).slice(-6)+Math.random().toString(36).slice(-6)+Math.random().toString(36).slice(-6);
+
 
 let result_code = `${result_header}\n${result};await Running(Widget);`
 
