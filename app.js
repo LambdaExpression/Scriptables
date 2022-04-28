@@ -35,6 +35,7 @@ app.get('/ping', (req, res) => {
 })
 
 let FILE_DATE = null
+let IS_FIRST=true
 
 app.get('/sync', (req, res) => {
   // console.log('[-] 等待同步到手机..')
@@ -44,17 +45,28 @@ app.get('/sync', (req, res) => {
   if (!fs.existsSync(WIDGET_FILE)) return res.send("nofile").end()
 
   setTimeout(() => {
-    // 判断文件时间
     const _time = fs.statSync(WIDGET_FILE).mtimeMs
-    if (_time === FILE_DATE) {
-      res.send("no").end()
-      return
-      // return console.log("[!] 文件没有更改，不同步")
+    // 首次一定同步文件
+    if (IS_FIRST) {
+      IS_FIRST = false
+      // 同步
+      res.sendFile(WIDGET_FILE)
+      console.log('[+] 同步到手机完毕')
+      FILE_DATE = _time
+    } else {
+
+      // 判断文件时间
+      if (_time === FILE_DATE) {
+        res.send("no").end()
+        return
+        // return console.log("[!] 文件没有更改，不同步")
+      }
+
+      // 同步
+      res.sendFile(WIDGET_FILE)
+      console.log('[+] 同步到手机完毕')
+      FILE_DATE = _time
     }
-    // 同步
-    res.sendFile(WIDGET_FILE)
-    console.log('[+] 同步到手机完毕')
-    FILE_DATE = _time
 
   }, 1000)
 })
@@ -66,23 +78,25 @@ app.post("/sync", (req, res) => {
   const _file = req.files[0]
   const FILE_NAME = _file['originalname'] + '.js'
   const WIDGET_FILE = path.join(SCRIPTS_DIR, FILE_NAME)
-  fs.renameSync(_file['path'], WIDGET_FILE)
+  console.log(WIDGET_FILE)
+  console.log(_file['path'])
+  // fs.renameSync(_file['path'], WIDGET_FILE)
   res.send("ok")
   console.log(`[*] 小组件源码（${_file['originalname']}）已同步，请打开编辑`)
   FILE_DATE = fs.statSync(WIDGET_FILE).mtimeMs
   // 尝试打开
-  let cmd = `code "${WIDGET_FILE}"`
-  if (os.platform() === "win32") {
-    cmd = `cmd.exe /c ${cmd}`
-  } else if (os.platform() === "linux") {
-    let shell = process.env["SHELL"]
-    cmd = `${shell} -c ${cmd}`
-  } else {
-    // cmd = `"/Users/meizu/Documents/code/github/LambdaExpression/Scriptables/Scripts" "${WIDGET_FILE}"`
-    cmd = `"echo" "${WIDGET_FILE}"`
-
-  }
-  child_process.execSync(cmd)
+  // let cmd = `code "${WIDGET_FILE}"`
+  // if (os.platform() === "win32") {
+  //   cmd = `cmd.exe /c ${cmd}`
+  // } else if (os.platform() === "linux") {
+  //   let shell = process.env["SHELL"]
+  //   cmd = `${shell} -c ${cmd}`
+  // } else {
+  //   // cmd = `"/Users/meizu/Documents/code/github/LambdaExpression/Scriptables/Scripts" "${WIDGET_FILE}"`
+  //   cmd = `"echo" "${WIDGET_FILE}"`
+  //
+  // }
+  // child_process.execSync(cmd)
 })
 
 // 远程 console，调试中把调试输出内容传送到服务端控制台输出
@@ -103,6 +117,18 @@ app.post('/console', (req, res) => {
       if (typeof data === 'object') console.log(data)
   }
   res.send("ok")
+})
+
+app.get("/Scripts/:name", (req, res) => {
+  let js = fs.readFileSync(path.join(WORK_DIR, "Scripts/"+req.params.name)).toString()
+  res.header('Content-Type', 'text/javascript');
+  res.send(js)
+})
+
+app.get("/Dist/:name", (req, res) => {
+  let js = fs.readFileSync(path.join(WORK_DIR, "Dist/"+req.params.name)).toString()
+  res.header('Content-Type', 'text/javascript');
+  res.send(js)
 })
 
 // 获取当前电脑IP
