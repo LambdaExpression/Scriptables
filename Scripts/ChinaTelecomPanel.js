@@ -61,7 +61,7 @@ class Widget extends Base {
             }
         }
         this.configDark = {
-            backgroundColor: new Color('#000'),
+            backgroundColor: new Color('#1c1c1e'),
             textColor: new Color('#eaeaea'),
             line1: {
                 fgCircleColor: new Color('#fff'),
@@ -80,7 +80,7 @@ class Widget extends Base {
         }
 
         this.registerAction('地址设置', this.actionSetting.bind(this))
-        this.registerAction('外观设置', this.themeSetting.bind(this))
+        // this.registerAction('外观设置', this.themeSetting.bind(this))
     }
 
     /**
@@ -105,7 +105,7 @@ class Widget extends Base {
     async renderSmall(data) {
 
         var config = this.configLight
-        if (await this.isUsingDark()) {
+        if (await this.isUsingDarkAppearance()) {
             config = this.configDark
         }
 
@@ -403,39 +403,43 @@ class Widget extends Base {
         return a.textFieldValue(0);
     }
 
-    async isUsingDark() {
-        const settings = this.getSettings()
-        const theme = Number(settings["theme"] === null ? 2 : settings["theme"])
-        switch (theme) {
-            case 0:
-                return false
-            case 1:
-                return true
-            case 2:
-                return await Device.isUsingDarkAppearance()
-            case 3:
-                const themeTime = settings["themeTime"] || "7:00-22:00"
-                let result = themeTime.trim().match(/^(\d{1,2}):(\d{1,2})-(\d{1,2}):(\d{1,2})$/)
-                if (result === null) {
-                    console.log("外观设置-自适应 输入(" + themeTime + ")格式有误，无法解析。启动自动适应模式")
-                    return await Device.isUsingDarkAppearance()
-                }
-                let date = new Date()
-                let themeTimeStartHours = result[1]
-                let themeTimeStartMinutes = result[2]
-                let themeTimeEndHours = result[3]
-                let themeTimeEndMinutes = result[4]
+    // async isUsingDark() {
+    //     const settings = this.getSettings()
+    //     const theme = Number(settings["theme"] === null ? 2 : settings["theme"])
+    //     switch (theme) {
+    //         case 0:
+    //             return false
+    //         case 1:
+    //             return true
+    //         case 2:
+    //             return await Device.isUsingDarkAppearance()
+    //         case 3:
+    //             const themeTime = settings["themeTime"] || "7:00-22:00"
+    //             let result = themeTime.trim().match(/^(\d{1,2}):(\d{1,2})-(\d{1,2}):(\d{1,2})$/)
+    //             if (result === null) {
+    //                 console.log("外观设置-自适应 输入(" + themeTime + ")格式有误，无法解析。启动自动适应模式")
+    //                 return await Device.isUsingDarkAppearance()
+    //             }
+    //             let date = new Date()
+    //             let themeTimeStartHours = result[1]
+    //             let themeTimeStartMinutes = result[2]
+    //             let themeTimeEndHours = result[3]
+    //             let themeTimeEndMinutes = result[4]
+    //
+    //             if (themeTimeStartHours < themeTimeEndHours || (themeTimeStartHours === themeTimeEndHours && themeTimeStartMinutes < themeTimeEndMinutes)) {
+    //                 return !((date.getHours() > themeTimeStartHours || (date.getHours() === themeTimeStartHours && date.getMinutes() > themeTimeStartMinutes))
+    //                     && (date.getHours() < themeTimeEndHours || (date.getHours() === themeTimeEndHours && date.getMinutes() < themeTimeEndMinutes)))
+    //             } else {
+    //                 return (date.getHours() < themeTimeStartHours || (date.getHours() === themeTimeStartHours && date.getMinutes() < themeTimeStartMinutes))
+    //                     && (date.getHours() > themeTimeEndHours || (date.getHours() === themeTimeEndHours && date.getMinutes() > themeTimeEndMinutes))
+    //             }
+    //         default:
+    //             return await Device.isUsingDarkAppearance()
+    //     }
+    // }
 
-                if (themeTimeStartHours < themeTimeEndHours || (themeTimeStartHours === themeTimeEndHours && themeTimeStartMinutes < themeTimeEndMinutes)) {
-                    return !((date.getHours() > themeTimeStartHours || (date.getHours() === themeTimeStartHours && date.getMinutes() > themeTimeStartMinutes))
-                        && (date.getHours() < themeTimeEndHours || (date.getHours() === themeTimeEndHours && date.getMinutes() < themeTimeEndMinutes)))
-                } else {
-                    return (date.getHours() < themeTimeStartHours || (date.getHours() === themeTimeStartHours && date.getMinutes() < themeTimeStartMinutes))
-                        && (date.getHours() > themeTimeEndHours || (date.getHours() === themeTimeEndHours && date.getMinutes() > themeTimeEndMinutes))
-                }
-            default:
-                return await Device.isUsingDarkAppearance()
-        }
+    async isUsingDarkAppearance() {
+        return !(Color.dynamic(Color.white(),Color.black()).red)
     }
 
 }
