@@ -187,25 +187,25 @@ class Base {
   async getWidgetScreenShot (title = null) {
     // Generate an alert with the provided array of options.
     async function generateAlert(message,options) {
-      
+
       let alert = new Alert()
       alert.message = message
-      
+
       for (const option of options) {
         alert.addAction(option)
       }
-      
+
       let response = await alert.presentAlert()
       return response
     }
 
     // Crop an image into the specified rect.
     function cropImage(img,rect) {
-      
+
       let draw = new DrawContext()
       draw.size = new Size(rect.width, rect.height)
-      
-      draw.drawImageAtPoint(img,new Point(-rect.x, -rect.y))  
+
+      draw.drawImageAtPoint(img,new Point(-rect.x, -rect.y))
       return draw.getImage()
     }
 
@@ -361,23 +361,23 @@ var mul_table=[512,512,456,512,328,456,335,512,405,328,271,456,388,335,292,512,4
       // Return a base64 representation.
       canvas.toDataURL(); 
       `
-      
+
       // Convert the images and create the HTML.
       let blurImgData = Data.fromPNG(img).toBase64String()
       let html = `
       <img id="blurImg" src="data:image/png;base64,${blurImgData}" />
       <canvas id="mainCanvas" />
       `
-      
+
       // Make the web view and get its return value.
       let view = new WebView()
       await view.loadHTML(html)
       let returnValue = await view.evaluateJavaScript(js)
-      
+
       // Remove the data type from the string and convert to data.
       let imageDataString = returnValue.slice(22)
       let imageData = Data.fromBase64String(imageDataString)
-      
+
       // Convert to image and crop before returning.
       let imageFromData = Image.fromData(imageData)
       // return cropImage(imageFromData)
@@ -399,7 +399,7 @@ var mul_table=[512,512,456,512,328,456,335,512,405,328,271,456,388,335,292,512,4
           middle: 819,
           bottom: 1407
         },
-      
+
         // 11 Pro Max, XS Max
         "2688": {
           small:  507,
@@ -411,7 +411,7 @@ var mul_table=[512,512,456,512,328,456,335,512,405,328,271,456,388,335,292,512,4
           middle: 858,
           bottom: 1488
         },
-      
+
         // 11, XR
         "1792": {
           small:  338,
@@ -423,8 +423,8 @@ var mul_table=[512,512,456,512,328,456,335,512,405,328,271,456,388,335,292,512,4
           middle: 580,
           bottom: 1000
         },
-        
-        
+
+
         // 11 Pro, XS, X
         "2436": {
           small:  465,
@@ -436,7 +436,7 @@ var mul_table=[512,512,456,512,328,456,335,512,405,328,271,456,388,335,292,512,4
           middle: 783,
           bottom: 1353
         },
-      
+
         // Plus phones
         "2208": {
           small:  471,
@@ -448,7 +448,7 @@ var mul_table=[512,512,456,512,328,456,335,512,405,328,271,456,388,335,292,512,4
           middle: 696,
           bottom: 1278
         },
-        
+
         // SE2 and 6/6S/7/8
         "1334": {
           small:  296,
@@ -460,8 +460,8 @@ var mul_table=[512,512,456,512,328,456,335,512,405,328,271,456,388,335,292,512,4
           middle: 412,
           bottom: 764
         },
-        
-        
+
+
         // SE1
         "1136": {
           small:  282,
@@ -473,7 +473,7 @@ var mul_table=[512,512,456,512,328,456,335,512,405,328,271,456,388,335,292,512,4
           middle: 399,
           bottom: 399
         },
-        
+
         // 11 and XR in Display Zoom mode
         "1624": {
           small: 310,
@@ -483,9 +483,9 @@ var mul_table=[512,512,456,512,328,456,335,512,405,328,271,456,388,335,292,512,4
           right: 394,
           top: 142,
           middle: 522,
-          bottom: 902 
+          bottom: 902
         },
-        
+
         // Plus in Display Zoom mode
         "2001" : {
           small: 444,
@@ -535,16 +535,16 @@ var mul_table=[512,512,456,512,328,456,335,512,405,328,271,456,388,335,292,512,4
       let positions = ["左上角","右上角","中间左","中间右","左下角","右下角"]
       let _posotions = ["Top left","Top right","Middle left","Middle right","Bottom left","Bottom right"]
       let position = await generateAlert(message,positions)
-      
+
       // Convert the two words into two keys for the phone size dictionary.
       let keys = _posotions[position].toLowerCase().split(' ')
       crop.y = phone[keys[0]]
       crop.x = phone[keys[1]]
-      
+
     } else if (widgetSize == "中尺寸") {
       crop.w = phone.medium
       crop.h = phone.small
-      
+
       // Medium and large widgets have a fixed x-value.
       crop.x = phone.left
       let positions = ["顶部","中间","底部"]
@@ -552,14 +552,14 @@ var mul_table=[512,512,456,512,328,456,335,512,405,328,271,456,388,335,292,512,4
       let position = await generateAlert(message,positions)
       let key = _positions[position].toLowerCase()
       crop.y = phone[key]
-      
+
     } else if(widgetSize == "大尺寸") {
       crop.w = phone.medium
       crop.h = phone.large
       crop.x = phone.left
       let positions = ["顶部","底部"]
       let position = await generateAlert(message,positions)
-      
+
       // Large widgets at the bottom have the "middle" y-value.
       crop.y = position ? phone.middle : phone.top
     }
@@ -607,15 +607,15 @@ var mul_table=[512,512,456,512,328,456,335,512,405,328,271,456,388,335,292,512,4
     let ctx = new DrawContext()
     // 获取图片的尺寸
     ctx.size = img.size
-    
+
     ctx.drawImageInRect(img, new Rect(0, 0, img.size['width'], img.size['height']))
     ctx.setFillColor(new Color(color, opacity))
     ctx.fillRect(new Rect(0, 0, img.size['width'], img.size['height']))
-    
+
     let res = await ctx.getImage()
     return res
   }
-  
+
   /**
    * 获取当前插件的设置
    * @param {boolean} json 是否为json格式
@@ -640,7 +640,7 @@ var mul_table=[512,512,456,512,328,456,335,512,405,328,271,456,388,335,292,512,4
       }else{
         res=cache
       }
-    
+
     return res
   }
 
@@ -674,7 +674,7 @@ var mul_table=[512,512,456,512,328,456,335,512,405,328,271,456,388,335,292,512,4
 
   /**
    * 设置当前组件的背景图片
-   * @param {image} img 
+   * @param {image} img
    */
   setBackgroundImage (img, notify = true) {
     if (!img) {
@@ -696,7 +696,98 @@ var mul_table=[512,512,456,512,328,456,335,512,405,328,271,456,388,335,292,512,4
       if (notify) this.notify("设置成功", "小组件背景图片已设置！稍后刷新生效")
     }
   }
-  
+
+
+  async themeSetting() {
+    let a = new Alert()
+    const settings = this.getSettings()
+    const theme = Number(settings["theme"] === null ? 2 : settings["theme"])
+    a.title = "外观设置"
+    a.message = "自动适应，现版本有一个官方bug，暂不推荐使用"
+    a.addAction((theme === 0 ? '✅ ' : '') + "保持浅色")
+    a.addAction((theme === 1 ? '✅ ' : '') + "保持深色")
+    a.addAction((theme === 2 ? '✅ ' : '') + "自动适应")
+    a.addAction((theme === 3 ? '✅ ' : '') + "自定义")
+    a.addCancelAction("取消操作")
+    let i = await a.presentSheet()
+    let themeTime
+    if (i === -1) return
+    switch (i) {
+      case 0:
+        break;
+      case 1:
+        break
+      case 2:
+        break
+      case 3:
+        themeTime = await this.themeTimeSetting()
+        break
+      default:
+        return
+    }
+
+    this.settings["theme"] = i
+    if (themeTime !== null) {
+      this.settings["themeTime"] = String(themeTime)
+    }
+    this.saveSettings()
+  }
+
+  async themeTimeSetting() {
+    const settings = this.getSettings()
+    const arg = settings["themeTime"] || "7:00-22:00"
+    let a = new Alert()
+    a.title = "自定义"
+    a.message = "输入浅色开始时间到结束时间，例如：'7:00-22:00'"
+    a.addTextField("7:00-22:00", arg)
+    a.addAction("确认");
+    await a.presentAlert();
+    return a.textFieldValue(0);
+  }
+
+  async isUsingDark() {
+    const settings = this.getSettings()
+    const theme = Number(settings["theme"] === null ? 2 : settings["theme"])
+    var flag
+    switch (theme) {
+      case 0:
+        flag = false
+        break
+      case 1:
+        flag = true
+        break
+      case 2:
+        flag = await Device.isUsingDarkAppearance()
+        break
+      case 3:
+        const themeTime = settings["themeTime"] || "7:00-22:00"
+        let result = themeTime.trim().match(/^(\d{1,2}):(\d{1,2})-(\d{1,2}):(\d{1,2})$/)
+        if (result === null) {
+          console.log("外观设置-自适应 输入(" + themeTime + ")格式有误，无法解析。启动自动适应模式")
+          flag = await Device.isUsingDarkAppearance()
+          break
+        }
+        let date = new Date()
+        let themeTimeStartHours = Number(result[1])
+        let themeTimeStartMinutes = Number(result[2])
+        let themeTimeEndHours = Number(result[3])
+        let themeTimeEndMinutes = Number(result[4])
+
+        if (themeTimeStartHours < themeTimeEndHours || (themeTimeStartHours === themeTimeEndHours && themeTimeStartMinutes < themeTimeEndMinutes)) {
+          flag = !((date.getHours() > themeTimeStartHours || (date.getHours() === themeTimeStartHours && date.getMinutes() > themeTimeStartMinutes))
+              && (date.getHours() < themeTimeEndHours || (date.getHours() === themeTimeEndHours && date.getMinutes() < themeTimeEndMinutes)))
+        } else {
+          flag = (date.getHours() < themeTimeStartHours || (date.getHours() === themeTimeStartHours && date.getMinutes() < themeTimeStartMinutes))
+              && (date.getHours() > themeTimeEndHours || (date.getHours() === themeTimeEndHours && date.getMinutes() > themeTimeEndMinutes))
+        }
+        break
+      default:
+        flag = await Device.isUsingDarkAppearance()
+        break
+    }
+    return flag
+  }
+
 }
 // @base.end
 // 运行环境
@@ -782,6 +873,7 @@ const Running = async (Widget, default_args = "") => {
       alert.message = M.desc
       // alert.addAction("反馈交流")
       alert.addAction("预览组件")
+
       for (let _ in actions) {
         alert.addAction(_)
         _actions.push(actions[_])
