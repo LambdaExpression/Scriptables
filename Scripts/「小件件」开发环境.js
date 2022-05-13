@@ -2,10 +2,7 @@
 // These must be at the very top of the file. Do not edit.
 // icon-color: deep-gray; icon-glyph: code-branch;
 // 
-// 「小件件」
-// 开发环境，用于小组件调用
-// https://x.im3x.cn
-// https://github.com/im3x/Scriptables
+// https://github.com/LambdaExpression/Scriptables
 // 
 
 // 组件基础类
@@ -152,6 +149,20 @@ class Base {
       ctx.fillRect(new Rect(0, 0, 100, 100))
       return await ctx.getImage()
     }
+  }
+
+  /**
+   * base64 转 image，不需要带有""
+   * @param base64
+   * @returns {Promise<*>}
+   */
+  async base64ToImage(base64){
+    if ( base64.indexOf(";base64,") >= 0 ) {
+      let bs = base64.split(";base64,")
+      base64 = bs[bs.length-1]
+    }
+    const d = Data.fromBase64String(base64)
+    return  Image.fromData(d)
   }
 
   /**
