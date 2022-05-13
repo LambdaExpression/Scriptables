@@ -23,7 +23,10 @@ app.use(bodyParser.json())
 app.get("/", (req, res) => {
   let html = fs.readFileSync(path.join(WORK_DIR, "guide.html")).toString()
   let js = fs.readFileSync(path.join(WORK_DIR, "install-runtime.js")).toString()
+  const replacer = new RegExp('@@host@@', 'g')
+  js = js.replace(replacer,_host)
   html = html.replace("@@code@@", js)
+  html = html.replace("@@scriptUrl@@", encodeURIComponent(_host+"/Dist/Weather-Lambdaexpression.scriptable"))
   res.send(html)
 })
 
