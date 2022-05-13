@@ -1,6 +1,6 @@
 // Variables used by Scriptable.
 // These must be at the very top of the file. Do not edit.
-// icon-color: orange; icon-glyph: comments;
+// icon-color: blue; icon-glyph: mobile-alt;
 //
 // iOS 桌面组件脚本 @「小件件」
 // 开发说明：请从 Widget 类开始编写，注释请勿修改
@@ -346,7 +346,7 @@ class Widget extends Base {
         const arg = settings["url"] || ""
         let a = new Alert()
         a.title = "设置地址"
-        a.message = "点击小组件浏览热点的方式"
+        a.message = "输入ChinaTelecomMonitor访问地址"
         a.addTextField("", arg)
         a.addAction("确认");
         await a.presentAlert();
